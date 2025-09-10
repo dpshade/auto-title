@@ -62,7 +62,7 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## Support
 
-Report bugs and request features at [GitHub Issues](https://github.com/dpshade/auto-title/issues). Documentation available in the [Wiki](https://github.com/dpshade/auto-title/wiki).
+Report bugs and request features at [GitHub Issues](https://github.com/dpshade/auto-title/issues).
 
 ## Changelog
 
