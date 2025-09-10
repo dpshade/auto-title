@@ -3,9 +3,8 @@
     "name": "Auto Title",
     "version": "1.0.0",
     "minAppVersion": "0.15.0",
-    "description": "Automatically generate meaningful titles for your files using AI (OpenAI or Perplexity)",
-    "author": "Your Name",
-    "authorUrl": "",
-    "fundingUrl": "",
+    "description": "Automatically generate meaningful titles for files using AI providers like OpenAI or Ollama.",
+    "author": "Dylan Shade",
+    "authorUrl": "https://github.com/dpshade",
     "isDesktopOnly": false
 }
