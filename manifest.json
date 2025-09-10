@@ -6,5 +6,6 @@
     "description": "Automatically generate meaningful titles for files using AI providers like OpenAI or Ollama.",
     "author": "Dylan Shade",
     "authorUrl": "https://github.com/dpshade",
+    "fundingUrl": "https://ko-fi.com/dpshade",
     "isDesktopOnly": false
 }
