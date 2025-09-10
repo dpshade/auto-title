@@ -6,7 +6,8 @@
       "Read(//Users/dylanshade/Obsidian/dps-prim/.obsidian/plugins/auto-title/**)",
       "Bash(git add:*)",
       "Bash(git push:*)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

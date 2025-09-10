@@ -31,7 +31,7 @@ var import_obsidian5 = require("obsidian");
 var DEFAULT_SETTINGS = {
   provider: "ollama",
   openaiApiKey: "",
-  ollamaUrl: "http://100.84.149.35:11434",
+  ollamaUrl: "http://localhost:11434",
   ollamaModel: "llama2:13b",
   availableModels: [],
   autoRename: true,
