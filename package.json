@@ -1,0 +1,31 @@
+{
+  "name": "auto-title",
+  "version": "1.0.0",
+  "description": "Automatically generate meaningful titles for your files using AI (OpenAI or Perplexity)",
+  "main": "main.js",
+  "scripts": {
+    "build": "node build.js",
+    "set-vault-path": "node build.js set-vault-path",
+    "version": "node version-bump.js && git add manifest.json versions.json"
+  },
+  "keywords": [
+    "obsidian",
+    "plugin",
+    "ai",
+    "openai",
+    "perplexity",
+    "title",
+    "naming",
+    "files"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.15.29",
+    "esbuild": "^0.25.5",
+    "obsidian": "^1.8.7"
+  },
+  "dependencies": {
+    "openai": "^5.0.1"
+  }
+}
