@@ -4,4 +4,6 @@ dist/
 *.log
 .obsidian/
 vault-path.txt
+.obsidian-vault-path
 .claude/
+*.backup
