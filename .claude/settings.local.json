@@ -4,7 +4,9 @@
       "Bash(bun run:*)",
       "Bash(npx tsc:*)",
       "Read(//Users/dylanshade/Obsidian/dps-prim/.obsidian/plugins/auto-title/**)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git init:*)"
     ],
     "deny": [],
     "ask": []
