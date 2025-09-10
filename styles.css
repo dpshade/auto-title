@@ -1,0 +1,33 @@
+/* Auto Title Plugin Styles */
+
+.auto-title-settings {
+    padding: 20px;
+}
+
+.auto-title-settings h2 {
+    margin-bottom: 20px;
+    color: var(--text-normal);
+}
+
+.auto-title-settings h3 {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    color: var(--text-muted);
+}
+
+.auto-title-settings p {
+    color: var(--text-muted);
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+/* Custom styling for the brain icon in ribbon */
+.ribbon-class[aria-label="Generate AI title"] svg {
+    color: var(--text-accent);
+}
+
+/* Notice styling for AI title generation */
+.notice[data-message*="Generating AI title"] {
+    background-color: var(--background-modifier-success);
+    border-color: var(--text-accent);
+}
