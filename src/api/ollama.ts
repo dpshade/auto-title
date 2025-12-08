@@ -1,3 +1,4 @@
+import { requestUrl } from 'obsidian';
 import { AutoTitleSettings } from '../settings';
 import { OllamaResponse, OllamaModel } from '../types';
 
@@ -6,13 +7,14 @@ export class OllamaService {
 
     async validateConnection(): Promise<boolean> {
         try {
-            const response = await fetch(`${this.settings.ollamaUrl}/api/tags`, {
+            const response = await requestUrl({
+                url: `${this.settings.ollamaUrl}/api/tags`,
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
-            return response.ok;
+            return response.status >= 200 && response.status < 300;
         } catch (error) {
             console.error('Ollama connection error:', error);
             return false;
@@ -21,20 +23,20 @@ export class OllamaService {
 
     async fetchModels(): Promise<string[]> {
         try {
-            const response = await fetch(`${this.settings.ollamaUrl}/api/tags`, {
+            const response = await requestUrl({
+                url: `${this.settings.ollamaUrl}/api/tags`,
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
             });
 
-            if (!response.ok) {
-                throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+            if (response.status < 200 || response.status >= 300) {
+                throw new Error(`Ollama API error: ${response.status}`);
             }
 
-            const data = await response.json();
-            // Handle response format: use either 'name' or 'model' field
-            return data.models?.map((model: any) => model.name || model.model) || [];
+            const data = response.json;
+            return data.models?.map((model: OllamaModel) => model.name || model.model) || [];
         } catch (error) {
             console.error('Error fetching Ollama models:', error);
             return [];
@@ -43,7 +45,8 @@ export class OllamaService {
 
     async generateTitle(content: string, prompt: string): Promise<string | null> {
         try {
-            const response = await fetch(`${this.settings.ollamaUrl}/api/chat`, {
+            const response = await requestUrl({
+                url: `${this.settings.ollamaUrl}/api/chat`,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,11 +67,11 @@ export class OllamaService {
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+            if (response.status < 200 || response.status >= 300) {
+                throw new Error(`Ollama API error: ${response.status}`);
             }
 
-            const data: OllamaResponse = await response.json();
+            const data: OllamaResponse = response.json;
 
             if (data.message && data.message.content) {
                 return data.message.content.trim() || null;

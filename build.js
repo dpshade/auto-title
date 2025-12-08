@@ -34,7 +34,7 @@ function build() {
 
     // Step 1: Compile TypeScript
     try {
-        execSync('esbuild src/main.ts --bundle --platform=node --target=es2018 --format=cjs --outfile=main.js --external:obsidian --external:electron', { stdio: 'pipe' });
+        execSync('esbuild src/main.ts --bundle --platform=node --target=es2018 --format=esm --outfile=main.js --external:obsidian --external:electron', { stdio: 'pipe' });
         console.log('✅ TypeScript compiled');
     } catch (error) {
         console.error('❌ TypeScript compilation failed');

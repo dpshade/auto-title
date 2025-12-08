@@ -10,12 +10,12 @@ export class TitleGenerator {
     async generateTitleForFile(file: TFile, isAutoRename: boolean = false) {
         // Check if API is configured
         if (this.plugin.settings.provider === 'openai' && !this.plugin.openaiService.isConfigured()) {
-            new Notice('OpenAI not configured. Please set your API key in settings.');
+            new Notice('Openai not configured. Please set your API key in settings.');
             return;
         }
 
         if (this.plugin.settings.provider === 'ollama' && !this.plugin.ollamaService.isConfigured()) {
-            new Notice('Ollama not configured. Please set your Ollama URL in settings.');
+            new Notice('Ollama not configured. Please set your ollama URL in settings.');
             return;
         }
 
@@ -24,7 +24,7 @@ export class TitleGenerator {
             let content: string;
             try {
                 content = await this.plugin.app.vault.read(file);
-            } catch (readError) {
+            } catch {
                 if (!isAutoRename) {
                     new Notice('Cannot read file content - may be a binary file');
                 }
@@ -78,7 +78,7 @@ export class TitleGenerator {
             const extractedTitle = TitleExtractor.extractTitle(rawResponse);
             if (!extractedTitle) {
                 new Notice('Failed to extract valid title from AI response');
-                console.log('Raw AI response:', rawResponse);
+                console.debug('Raw AI response:', rawResponse);
                 return;
             }
 

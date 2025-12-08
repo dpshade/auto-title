@@ -26,7 +26,7 @@ export default class AutoTitlePlugin extends Plugin {
         }
 
         if (this.settings.provider === 'ollama' && this.settings.ollamaUrl) {
-            this.initializeOllama();
+            void this.initializeOllama();
         }
 
         // Register commands
@@ -52,7 +52,7 @@ export default class AutoTitlePlugin extends Plugin {
             callback: () => {
                 const activeFile = this.app.workspace.getActiveFile();
                 if (activeFile) {
-                    this.titleGenerator.generateTitleForFile(activeFile);
+                    void this.titleGenerator.generateTitleForFile(activeFile);
                 } else {
                     new Notice('No active file to rename');
                 }
@@ -63,7 +63,7 @@ export default class AutoTitlePlugin extends Plugin {
         this.addRibbonIcon('brain-circuit', 'Generate AI title', () => {
             const activeFile = this.app.workspace.getActiveFile();
             if (activeFile) {
-                this.titleGenerator.generateTitleForFile(activeFile);
+                void this.titleGenerator.generateTitleForFile(activeFile);
             } else {
                 new Notice('No active file to rename');
             }
@@ -85,7 +85,7 @@ export default class AutoTitlePlugin extends Plugin {
     private setupUntitledTracking() {
         // Track when files with "Untitled" are opened and rename when left
         this.registerEvent(
-            this.app.workspace.on('active-leaf-change', (leaf) => {
+            this.app.workspace.on('active-leaf-change', () => {
                 const activeFile = this.app.workspace.getActiveFile();
 
                 // Check if the new active file has "Untitled" in its name
@@ -97,7 +97,7 @@ export default class AutoTitlePlugin extends Plugin {
 
         // Listen for when the active file changes to rename the previous file if it was "Untitled"
         this.registerEvent(
-            this.app.workspace.on('active-leaf-change', (leaf) => {
+            this.app.workspace.on('active-leaf-change', () => {
                 // Get all currently tracked untitled files and check if any are no longer active
                 const activeFile = this.app.workspace.getActiveFile();
                 const currentActivePath = activeFile?.path;
@@ -109,7 +109,7 @@ export default class AutoTitlePlugin extends Plugin {
                         if (file instanceof TFile && file.basename.includes('Untitled')) {
                             // File is no longer active and still has "Untitled" - rename it
                             setTimeout(() => {
-                                this.titleGenerator.generateTitleForFile(file, true);
+                                void this.titleGenerator.generateTitleForFile(file, true);
                             }, 500); // Small delay to ensure file is fully saved
                             this.untitledFiles.delete(filePath);
                         }
@@ -148,7 +148,7 @@ export default class AutoTitlePlugin extends Plugin {
                 if (file instanceof TFile) {
                     // Wait a bit for the file to be created and potentially have content
                     setTimeout(() => {
-                        this.titleGenerator.generateTitleForFile(file, true);
+                        void this.titleGenerator.generateTitleForFile(file, true);
                     }, 1000);
                 }
             })
@@ -162,7 +162,7 @@ export default class AutoTitlePlugin extends Plugin {
                 const models = await this.ollamaService.fetchModels();
                 this.settings.availableModels = models;
                 await this.saveSettings();
-                console.log(`Ollama initialized with ${models.length} models available`);
+                console.debug(`Ollama initialized with ${models.length} models available`);
             } else {
                 console.warn('Failed to connect to Ollama server');
             }
@@ -188,7 +188,7 @@ export default class AutoTitlePlugin extends Plugin {
         }
 
         if (this.settings.provider === 'ollama' && this.settings.ollamaUrl) {
-            this.initializeOllama();
+            void this.initializeOllama();
         }
     }
 }
