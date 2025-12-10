@@ -35,7 +35,7 @@ export class OpenAIService {
             this.isInitialized = true;
         } else {
             console.error('Failed to initialize OpenAI: API key not provided');
-            new Notice('failed to initialize Openai. Please check your API key.');
+            new Notice('Failed to initialize OpenAI. Please check your API key.');
         }
     }
 

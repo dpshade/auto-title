@@ -28,7 +28,7 @@ var OpenAIService = class {
       this.isInitialized = true;
     } else {
       console.error("Failed to initialize OpenAI: API key not provided");
-      new Notice("failed to initialize Openai. Please check your API key.");
+      new Notice("Failed to initialize OpenAI. Please check your API key.");
     }
   }
   async generateTitle(content, prompt) {
@@ -166,13 +166,13 @@ var _AutoTitleSettingTab = class _AutoTitleSettingTab extends PluginSettingTab {
       _AutoTitleSettingTab.modelsRefreshed = true;
       void this.validateAndFetchModels();
     }
-    new Setting(containerEl).setName("AI provider").setDesc("Choose which AI provider to use for title generation").addDropdown((dropdown) => dropdown.addOption("ollama", "Ollama").addOption("openai", "Openai").setValue(this.plugin.settings.provider).onChange(async (value) => {
+    new Setting(containerEl).setName("AI provider").setDesc("Choose which AI provider to use for title generation").addDropdown((dropdown) => dropdown.addOption("ollama", "Ollama").addOption("openai", "OpenAI").setValue(this.plugin.settings.provider).onChange(async (value) => {
       this.plugin.settings.provider = value;
       await this.plugin.saveSettings();
       this.display();
     }));
     if (this.plugin.settings.provider === "openai") {
-      new Setting(containerEl).setName("Openai API key").setDesc("enter your Openai API key to enable ai title generation").addText((text) => text.setPlaceholder("Sk-...").setValue(this.plugin.settings.openaiApiKey).onChange(async (value) => {
+      new Setting(containerEl).setName("OpenAI API key").setDesc("Enter your OpenAI API key to enable AI title generation").addText((text) => text.setPlaceholder("Sk-...").setValue(this.plugin.settings.openaiApiKey).onChange(async (value) => {
         this.plugin.settings.openaiApiKey = value;
         await this.plugin.saveSettings();
       }));
@@ -388,11 +388,11 @@ var TitleGenerator = class {
   async generateTitleForFile(file, isAutoRename = false) {
     var _a;
     if (this.plugin.settings.provider === "openai" && !this.plugin.openaiService.isConfigured()) {
-      new Notice3("Openai not configured. Please set your API key in settings.");
+      new Notice3("OpenAI not configured. Please set your API key in settings.");
       return;
     }
     if (this.plugin.settings.provider === "ollama" && !this.plugin.ollamaService.isConfigured()) {
-      new Notice3("Ollama not configured. Please set your ollama URL in settings.");
+      new Notice3("Ollama not configured. Please set your Ollama URL in settings.");
       return;
     }
     try {

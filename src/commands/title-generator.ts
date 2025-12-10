@@ -10,12 +10,12 @@ export class TitleGenerator {
     async generateTitleForFile(file: TFile, isAutoRename: boolean = false) {
         // Check if API is configured
         if (this.plugin.settings.provider === 'openai' && !this.plugin.openaiService.isConfigured()) {
-            new Notice('Openai not configured. Please set your API key in settings.');
+            new Notice('OpenAI not configured. Please set your API key in settings.');
             return;
         }
 
         if (this.plugin.settings.provider === 'ollama' && !this.plugin.ollamaService.isConfigured()) {
-            new Notice('Ollama not configured. Please set your ollama URL in settings.');
+            new Notice('Ollama not configured. Please set your Ollama URL in settings.');
             return;
         }
 

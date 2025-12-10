@@ -3,6 +3,9 @@ import { defineConfig } from "eslint/config";
 import obsidianmd from "eslint-plugin-obsidianmd";
 
 export default defineConfig([
+  {
+    ignores: ["build.js", "main.js", "dist/**"],
+  },
   ...obsidianmd.configs.recommended,
   {
     files: ["**/*.ts"],
@@ -21,7 +24,7 @@ export default defineConfig([
       "@typescript-eslint/no-unsafe-call": "off",
       "@typescript-eslint/no-unsafe-member-access": "off",
       "obsidianmd/ui/sentence-case": ["error", {
-        brands: ["openai", "ollama"],
+        brands: ["OpenAI", "Ollama"],
         acronyms: ["API", "URL", "AI"]
       }],
     },

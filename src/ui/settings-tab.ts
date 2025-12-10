@@ -32,7 +32,7 @@ export class AutoTitleSettingTab extends PluginSettingTab {
             .setDesc('Choose which AI provider to use for title generation')
             .addDropdown(dropdown => dropdown
                 .addOption('ollama', 'Ollama')
-                .addOption('openai', 'Openai')
+                .addOption('openai', 'OpenAI')
                 .setValue(this.plugin.settings.provider)
                 .onChange(async (value: string) => {
                     this.plugin.settings.provider = value as Provider;
@@ -43,8 +43,8 @@ export class AutoTitleSettingTab extends PluginSettingTab {
         // OpenAI settings
         if (this.plugin.settings.provider === 'openai') {
             new Setting(containerEl)
-                .setName('Openai API key')
-                .setDesc('enter your Openai API key to enable ai title generation')
+                .setName('OpenAI API key')
+                .setDesc('Enter your OpenAI API key to enable AI title generation')
                 .addText(text => text
                     .setPlaceholder('Sk-...')
                     .setValue(this.plugin.settings.openaiApiKey)
