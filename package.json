@@ -7,7 +7,9 @@
     "build": "esbuild src/main.ts --bundle --platform=browser --target=es2018 --format=cjs --outfile=main.js --external:obsidian --external:electron --main-fields=browser,module,main",
     "build:dist": "bun run build && mkdir -p dist && cp main.js manifest.json styles.css versions.json dist/",
     "deploy": "bun run build:dist && test -f .obsidian-vault-path && cp dist/* \"$(cat .obsidian-vault-path)/.obsidian/plugins/auto-title/\" || echo 'Set vault path: echo /path/to/vault > .obsidian-vault-path'",
-    "version": "node version-bump.js && git add manifest.json versions.json"
+    "version": "node version-bump.js && git add manifest.json versions.json",
+    "lint": "bunx eslint .",
+    "lint:fix": "bunx eslint . --fix"
   },
   "keywords": [
     "obsidian",
