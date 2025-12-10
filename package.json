@@ -4,8 +4,9 @@
   "description": "Automatically generate meaningful titles for your files using AI (OpenAI or Perplexity)",
   "main": "main.js",
   "scripts": {
-    "build": "node build.js",
-    "set-vault-path": "node build.js set-vault-path",
+    "build": "esbuild src/main.ts --bundle --platform=browser --target=es2018 --format=cjs --outfile=main.js --external:obsidian --external:electron --main-fields=browser,module,main",
+    "build:dist": "bun run build && mkdir -p dist && cp main.js manifest.json styles.css versions.json dist/",
+    "deploy": "bun run build:dist && test -f .obsidian-vault-path && cp dist/* \"$(cat .obsidian-vault-path)/.obsidian/plugins/auto-title/\" || echo 'Set vault path: echo /path/to/vault > .obsidian-vault-path'",
     "version": "node version-bump.js && git add manifest.json versions.json"
   },
   "keywords": [

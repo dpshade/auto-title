@@ -1,9 +1,31 @@
+"use strict";
 var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // src/main.ts
-import { Plugin, TFile as TFile2, Notice as Notice4 } from "obsidian";
+var main_exports = {};
+__export(main_exports, {
+  default: () => AutoTitlePlugin3
+});
+module.exports = __toCommonJS(main_exports);
+var import_obsidian6 = require("obsidian");
 
 // src/settings.ts
 var DEFAULT_SETTINGS = {
@@ -17,7 +39,7 @@ var DEFAULT_SETTINGS = {
 };
 
 // src/api/openai.ts
-import { requestUrl, Notice } from "obsidian";
+var import_obsidian = require("obsidian");
 var OpenAIService = class {
   constructor(settings) {
     this.settings = settings;
@@ -28,7 +50,7 @@ var OpenAIService = class {
       this.isInitialized = true;
     } else {
       console.error("Failed to initialize OpenAI: API key not provided");
-      new Notice("Failed to initialize OpenAI. Please check your API key.");
+      new import_obsidian.Notice("Failed to initialize OpenAI. Please check your API key.");
     }
   }
   async generateTitle(content, prompt) {
@@ -37,7 +59,7 @@ var OpenAIService = class {
       return null;
     }
     try {
-      const response = await requestUrl({
+      const response = await (0, import_obsidian.requestUrl)({
         url: "https://api.openai.com/v1/chat/completions",
         method: "POST",
         headers: {
@@ -69,14 +91,14 @@ var OpenAIService = class {
 };
 
 // src/api/ollama.ts
-import { requestUrl as requestUrl2 } from "obsidian";
+var import_obsidian2 = require("obsidian");
 var OllamaService = class {
   constructor(settings) {
     this.settings = settings;
   }
   async validateConnection() {
     try {
-      const response = await requestUrl2({
+      const response = await (0, import_obsidian2.requestUrl)({
         url: `${this.settings.ollamaUrl}/api/tags`,
         method: "GET",
         headers: {
@@ -92,7 +114,7 @@ var OllamaService = class {
   async fetchModels() {
     var _a;
     try {
-      const response = await requestUrl2({
+      const response = await (0, import_obsidian2.requestUrl)({
         url: `${this.settings.ollamaUrl}/api/tags`,
         method: "GET",
         headers: {
@@ -111,7 +133,7 @@ var OllamaService = class {
   }
   async generateTitle(content, prompt) {
     try {
-      const response = await requestUrl2({
+      const response = await (0, import_obsidian2.requestUrl)({
         url: `${this.settings.ollamaUrl}/api/chat`,
         method: "POST",
         headers: {
@@ -151,8 +173,8 @@ var OllamaService = class {
 };
 
 // src/ui/settings-tab.ts
-import { PluginSettingTab, Setting } from "obsidian";
-var _AutoTitleSettingTab = class _AutoTitleSettingTab extends PluginSettingTab {
+var import_obsidian3 = require("obsidian");
+var _AutoTitleSettingTab = class _AutoTitleSettingTab extends import_obsidian3.PluginSettingTab {
   constructor(app, plugin) {
     super(app, plugin);
     __publicField(this, "plugin");
@@ -161,30 +183,30 @@ var _AutoTitleSettingTab = class _AutoTitleSettingTab extends PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    new Setting(containerEl).setName("Configuration").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("Configuration").setHeading();
     if (this.plugin.settings.provider === "ollama" && this.plugin.settings.ollamaUrl && !_AutoTitleSettingTab.modelsRefreshed) {
       _AutoTitleSettingTab.modelsRefreshed = true;
       void this.validateAndFetchModels();
     }
-    new Setting(containerEl).setName("AI provider").setDesc("Choose which AI provider to use for title generation").addDropdown((dropdown) => dropdown.addOption("ollama", "Ollama").addOption("openai", "OpenAI").setValue(this.plugin.settings.provider).onChange(async (value) => {
+    new import_obsidian3.Setting(containerEl).setName("AI provider").setDesc("Choose which AI provider to use for title generation").addDropdown((dropdown) => dropdown.addOption("ollama", "Ollama").addOption("openai", "OpenAI").setValue(this.plugin.settings.provider).onChange(async (value) => {
       this.plugin.settings.provider = value;
       await this.plugin.saveSettings();
       this.display();
     }));
     if (this.plugin.settings.provider === "openai") {
-      new Setting(containerEl).setName("OpenAI API key").setDesc("Enter your OpenAI API key to enable AI title generation").addText((text) => text.setPlaceholder("Sk-...").setValue(this.plugin.settings.openaiApiKey).onChange(async (value) => {
+      new import_obsidian3.Setting(containerEl).setName("OpenAI API key").setDesc("Enter your OpenAI API key to enable AI title generation").addText((text) => text.setPlaceholder("Sk-...").setValue(this.plugin.settings.openaiApiKey).onChange(async (value) => {
         this.plugin.settings.openaiApiKey = value;
         await this.plugin.saveSettings();
       }));
     }
     if (this.plugin.settings.provider === "ollama") {
-      new Setting(containerEl).setName("Ollama URL").setDesc("Enter your Ollama server URL").addText((text) => text.setPlaceholder("http://100.84.149.35:11434").setValue(this.plugin.settings.ollamaUrl).onChange(async (value) => {
+      new import_obsidian3.Setting(containerEl).setName("Ollama URL").setDesc("Enter your Ollama server URL").addText((text) => text.setPlaceholder("http://100.84.149.35:11434").setValue(this.plugin.settings.ollamaUrl).onChange(async (value) => {
         this.plugin.settings.ollamaUrl = value;
         await this.plugin.saveSettings();
         _AutoTitleSettingTab.modelsRefreshed = false;
         void this.validateAndFetchModels();
       }));
-      new Setting(containerEl).setName("Ollama model").setDesc("Select the model to use for title generation").addDropdown((dropdown) => {
+      new import_obsidian3.Setting(containerEl).setName("Ollama model").setDesc("Select the model to use for title generation").addDropdown((dropdown) => {
         if (!this.plugin.settings.availableModels.includes(this.plugin.settings.ollamaModel)) {
           dropdown.addOption(this.plugin.settings.ollamaModel, this.plugin.settings.ollamaModel);
         }
@@ -202,21 +224,21 @@ var _AutoTitleSettingTab = class _AutoTitleSettingTab extends PluginSettingTab {
         await this.validateAndFetchModels();
       }));
     }
-    new Setting(containerEl).setName("Auto-rename new files").setDesc("Automatically generate titles for new files").addToggle((toggle) => toggle.setValue(this.plugin.settings.autoRename).onChange(async (value) => {
+    new import_obsidian3.Setting(containerEl).setName("Auto-rename new files").setDesc("Automatically generate titles for new files").addToggle((toggle) => toggle.setValue(this.plugin.settings.autoRename).onChange(async (value) => {
       this.plugin.settings.autoRename = value;
       await this.plugin.saveSettings();
     }));
-    new Setting(containerEl).setName("Only rename untitled files").setDesc('When auto-rename is enabled, only rename files that have "untitled" in their name, and only when the file is left or closed').addToggle((toggle) => toggle.setValue(this.plugin.settings.onlyRenameUntitled).onChange(async (value) => {
+    new import_obsidian3.Setting(containerEl).setName("Only rename untitled files").setDesc('When auto-rename is enabled, only rename files that have "untitled" in their name, and only when the file is left or closed').addToggle((toggle) => toggle.setValue(this.plugin.settings.onlyRenameUntitled).onChange(async (value) => {
       this.plugin.settings.onlyRenameUntitled = value;
       await this.plugin.saveSettings();
     }));
-    new Setting(containerEl).setName("Usage").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("Usage").setHeading();
     containerEl.createEl("p", { text: 'Use the command palette (Cmd/Ctrl+P) and search for "Generate AI title" or click the brain icon in the ribbon to generate a title for the current file.' });
     containerEl.createEl("p", { text: "When auto-rename is enabled, new files will automatically get AI-generated titles based on their content. Works with all text-based file types." });
     if (this.plugin.settings.provider === "ollama") {
       containerEl.createEl("p", { text: "Ollama provides local AI model execution with privacy and customization benefits." });
     }
-    new Setting(containerEl).setName("Title generation").setHeading();
+    new import_obsidian3.Setting(containerEl).setName("Title generation").setHeading();
     containerEl.createEl("p", { text: "The AI uses a fixed prompt designed to generate concise 2-5 word titles that accurately describe your note content. The original file extension is preserved." });
   }
   async validateAndFetchModels() {
@@ -232,7 +254,7 @@ __publicField(_AutoTitleSettingTab, "modelsRefreshed", false);
 var AutoTitleSettingTab = _AutoTitleSettingTab;
 
 // src/commands/title-generator.ts
-import { Notice as Notice3 } from "obsidian";
+var import_obsidian5 = require("obsidian");
 
 // src/utils/constants.ts
 var TITLE_GENERATION_PROMPT = `Analyze the following note content and create a precise title. Identify the single most important CORE NOUN that represents what this note is about, then add 2-4 helper words that provide essential context.
@@ -363,14 +385,14 @@ var TitleExtractor = class {
 };
 
 // src/ui/loading-toast.ts
-import { Notice as Notice2 } from "obsidian";
+var import_obsidian4 = require("obsidian");
 var LoadingToast = class {
   constructor() {
     __publicField(this, "notice", null);
   }
   show() {
     this.hide();
-    this.notice = new Notice2("Generating title...", 0);
+    this.notice = new import_obsidian4.Notice("Generating title...", 0);
   }
   hide() {
     if (this.notice) {
@@ -388,11 +410,11 @@ var TitleGenerator = class {
   async generateTitleForFile(file, isAutoRename = false) {
     var _a;
     if (this.plugin.settings.provider === "openai" && !this.plugin.openaiService.isConfigured()) {
-      new Notice3("OpenAI not configured. Please set your API key in settings.");
+      new import_obsidian5.Notice("OpenAI not configured. Please set your API key in settings.");
       return;
     }
     if (this.plugin.settings.provider === "ollama" && !this.plugin.ollamaService.isConfigured()) {
-      new Notice3("Ollama not configured. Please set your Ollama URL in settings.");
+      new import_obsidian5.Notice("Ollama not configured. Please set your Ollama URL in settings.");
       return;
     }
     try {
@@ -401,19 +423,19 @@ var TitleGenerator = class {
         content = await this.plugin.app.vault.read(file);
       } catch (e) {
         if (!isAutoRename) {
-          new Notice3("Cannot read file content - may be a binary file");
+          new import_obsidian5.Notice("Cannot read file content - may be a binary file");
         }
         return;
       }
       if (content.trim().length < 10) {
         if (!isAutoRename) {
-          new Notice3("File content is too short to generate a meaningful title");
+          new import_obsidian5.Notice("File content is too short to generate a meaningful title");
         }
         return;
       }
       if (content.length > 1e5) {
         if (!isAutoRename) {
-          new Notice3("File is too large for title generation");
+          new import_obsidian5.Notice("File is too large for title generation");
         }
         return;
       }
@@ -433,18 +455,18 @@ var TitleGenerator = class {
         loadingToast.hide();
       }
       if (!rawResponse) {
-        new Notice3("Failed to get response from AI service");
+        new import_obsidian5.Notice("Failed to get response from AI service");
         return;
       }
       const extractedTitle = TitleExtractor.extractTitle(rawResponse);
       if (!extractedTitle) {
-        new Notice3("Failed to extract valid title from AI response");
+        new import_obsidian5.Notice("Failed to extract valid title from AI response");
         console.debug("Raw AI response:", rawResponse);
         return;
       }
       const cleanTitle = TitleExtractor.validateAndCleanTitle(extractedTitle);
       if (!cleanTitle) {
-        new Notice3("Generated title failed validation");
+        new import_obsidian5.Notice("Generated title failed validation");
         return;
       }
       const dir = ((_a = file.parent) == null ? void 0 : _a.path) || "";
@@ -452,20 +474,20 @@ var TitleGenerator = class {
       const newPath = dir ? `${dir}/${cleanTitle}.${extension}` : `${cleanTitle}.${extension}`;
       const existingFile = this.plugin.app.vault.getAbstractFileByPath(newPath);
       if (existingFile && existingFile !== file) {
-        new Notice3(`File "${cleanTitle}.${extension}" already exists`);
+        new import_obsidian5.Notice(`File "${cleanTitle}.${extension}" already exists`);
         return;
       }
       await this.plugin.app.fileManager.renameFile(file, newPath);
-      new Notice3(`File renamed to: ${cleanTitle}.${extension}`);
+      new import_obsidian5.Notice(`File renamed to: ${cleanTitle}.${extension}`);
     } catch (error) {
       console.error("Error generating title:", error);
-      new Notice3(`Failed to generate title using ${this.plugin.settings.provider}. Please check your configuration and try again.`);
+      new import_obsidian5.Notice(`Failed to generate title using ${this.plugin.settings.provider}. Please check your configuration and try again.`);
     }
   }
 };
 
 // src/main.ts
-var AutoTitlePlugin3 = class extends Plugin {
+var AutoTitlePlugin3 = class extends import_obsidian6.Plugin {
   constructor() {
     super(...arguments);
     __publicField(this, "settings", DEFAULT_SETTINGS);
@@ -501,7 +523,7 @@ var AutoTitlePlugin3 = class extends Plugin {
         if (activeFile) {
           void this.titleGenerator.generateTitleForFile(activeFile);
         } else {
-          new Notice4("No active file to rename");
+          new import_obsidian6.Notice("No active file to rename");
         }
       }
     });
@@ -510,7 +532,7 @@ var AutoTitlePlugin3 = class extends Plugin {
       if (activeFile) {
         void this.titleGenerator.generateTitleForFile(activeFile);
       } else {
-        new Notice4("No active file to rename");
+        new import_obsidian6.Notice("No active file to rename");
       }
     });
   }
@@ -540,7 +562,7 @@ var AutoTitlePlugin3 = class extends Plugin {
         for (const filePath of this.untitledFiles) {
           if (filePath !== currentActivePath) {
             const file = this.app.vault.getAbstractFileByPath(filePath);
-            if (file instanceof TFile2 && file.basename.includes("Untitled")) {
+            if (file instanceof import_obsidian6.TFile && file.basename.includes("Untitled")) {
               setTimeout(() => {
                 void this.titleGenerator.generateTitleForFile(file, true);
               }, 500);
@@ -552,14 +574,14 @@ var AutoTitlePlugin3 = class extends Plugin {
     );
     this.registerEvent(
       this.app.vault.on("delete", (file) => {
-        if (file instanceof TFile2) {
+        if (file instanceof import_obsidian6.TFile) {
           this.untitledFiles.delete(file.path);
         }
       })
     );
     this.registerEvent(
       this.app.vault.on("rename", (file, oldPath) => {
-        if (file instanceof TFile2) {
+        if (file instanceof import_obsidian6.TFile) {
           this.untitledFiles.delete(oldPath);
           const activeFile = this.app.workspace.getActiveFile();
           if (file.basename.includes("Untitled") && file.path !== (activeFile == null ? void 0 : activeFile.path)) {
@@ -572,7 +594,7 @@ var AutoTitlePlugin3 = class extends Plugin {
   setupImmediateRename() {
     this.registerEvent(
       this.app.vault.on("create", (file) => {
-        if (file instanceof TFile2) {
+        if (file instanceof import_obsidian6.TFile) {
           setTimeout(() => {
             void this.titleGenerator.generateTitleForFile(file, true);
           }, 1e3);
@@ -609,7 +631,4 @@ var AutoTitlePlugin3 = class extends Plugin {
       void this.initializeOllama();
     }
   }
-};
-export {
-  AutoTitlePlugin3 as default
 };
