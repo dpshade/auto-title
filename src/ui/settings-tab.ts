@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
 import AutoTitlePlugin from '../main';
-import { Provider } from '../settings';
+import type { Provider } from '../settings';
 
 export class AutoTitleSettingTab extends PluginSettingTab {
     plugin: AutoTitlePlugin;
@@ -57,7 +57,9 @@ export class AutoTitleSettingTab extends PluginSettingTab {
         // Ollama settings
         if (this.plugin.settings.provider === 'ollama') {
             new Setting(containerEl)
+                // eslint-disable-next-line obsidianmd/ui/sentence-case -- Ollama is a proper brand name
                 .setName('Ollama URL')
+                // eslint-disable-next-line obsidianmd/ui/sentence-case -- Ollama is a proper brand name
                 .setDesc('Enter your Ollama server URL')
                 .addText(text => text
                     .setPlaceholder('http://100.84.149.35:11434')
@@ -71,6 +73,7 @@ export class AutoTitleSettingTab extends PluginSettingTab {
                     }));
 
             new Setting(containerEl)
+                // eslint-disable-next-line obsidianmd/ui/sentence-case -- Ollama is a proper brand name
                 .setName('Ollama model')
                 .setDesc('Select the model to use for title generation')
                 .addDropdown(dropdown => {
@@ -128,6 +131,7 @@ export class AutoTitleSettingTab extends PluginSettingTab {
         containerEl.createEl('p', { text: 'When auto-rename is enabled, new files will automatically get AI-generated titles based on their content. Works with all text-based file types.' });
 
         if (this.plugin.settings.provider === 'ollama') {
+            // eslint-disable-next-line obsidianmd/ui/sentence-case -- Ollama is a proper brand name
             containerEl.createEl('p', { text: 'Ollama provides local AI model execution with privacy and customization benefits.' });
         }
 

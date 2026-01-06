@@ -15,6 +15,7 @@ export class TitleGenerator {
         }
 
         if (this.plugin.settings.provider === 'ollama' && !this.plugin.ollamaService.isConfigured()) {
+            // eslint-disable-next-line obsidianmd/ui/sentence-case -- Ollama is a proper brand name
             new Notice('Ollama not configured. Please set your Ollama URL in settings.');
             return;
         }
