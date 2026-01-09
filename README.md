@@ -1,4 +1,5 @@
 # Auto Title - Obsidian Plugin
+<!-- trigger rescan -->
 
 An Obsidian plugin that automatically generates meaningful titles for your notes and files using AI providers like Ollama's local language models or OpenAI's GPT models.
 
