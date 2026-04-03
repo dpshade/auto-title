@@ -8,6 +8,7 @@ import { TitleGenerator } from './commands/title-generator';
 export default class AutoTitlePlugin extends Plugin {
     settings: AutoTitleSettings = DEFAULT_SETTINGS;
     openaiService: OpenAIService;
+    customService: OpenAIService;
     ollamaService: OllamaService;
     titleGenerator: TitleGenerator;
     untitledFiles: Set<string> = new Set();
@@ -16,13 +17,18 @@ export default class AutoTitlePlugin extends Plugin {
         await this.loadSettings();
 
         // Initialize services
-        this.openaiService = new OpenAIService(this.settings);
+        this.openaiService = new OpenAIService(this.settings, false);
+        this.customService = new OpenAIService(this.settings, true);
         this.ollamaService = new OllamaService(this.settings);
         this.titleGenerator = new TitleGenerator(this);
 
         // Initialize providers based on current settings
         if (this.settings.provider === 'openai' && this.settings.openaiApiKey) {
             this.openaiService.initialize();
+        }
+
+        if (this.settings.provider === 'custom' && this.settings.customApiKey) {
+            this.customService.initialize();
         }
 
         if (this.settings.provider === 'ollama' && this.settings.ollamaUrl) {
@@ -79,6 +85,10 @@ export default class AutoTitlePlugin extends Plugin {
             this.setupUntitledTracking();
         } else {
             this.setupImmediateRename();
+        }
+
+        if (this.settings.autoRenameOnOpen) {
+            this.setupOpenTracking();
         }
     }
 
@@ -155,6 +165,63 @@ export default class AutoTitlePlugin extends Plugin {
         );
     }
 
+    private setupOpenTracking() {
+        const processedFiles: Set<string> = new Set();
+        const debounceTimers: Map<string, number> = new Map();
+        const DEBOUNCE_DELAY = 2000;
+
+        this.registerEvent(
+            this.app.workspace.on('active-leaf-change', () => {
+                const activeFile = this.app.workspace.getActiveFile();
+                if (activeFile && activeFile.basename.startsWith('Untitled') && !processedFiles.has(activeFile.path)) {
+                    // Clear existing timer if any
+                    if (debounceTimers.has(activeFile.path)) {
+                        window.clearTimeout(debounceTimers.get(activeFile.path));
+                    }
+
+                    const timer = window.setTimeout(() => {
+                        debounceTimers.delete(activeFile.path);
+                        void (async () => {
+                            try {
+                                const content = await this.app.vault.read(activeFile);
+                                if (content.trim().length >= this.settings.autoRenameThreshold) {
+                                    processedFiles.add(activeFile.path);
+                                    await this.titleGenerator.generateTitleForFile(activeFile, true, true);
+                                }
+                            } catch (e) {
+                                console.error('Error checking file length:', e);
+                            }
+                        })();
+                    }, DEBOUNCE_DELAY);
+
+                    debounceTimers.set(activeFile.path, timer);
+                }
+            })
+        );
+
+        this.registerEvent(
+            this.app.vault.on('delete', (file) => {
+                if (file instanceof TFile) {
+                    processedFiles.delete(file.path);
+                    if (debounceTimers.has(file.path)) {
+                        window.clearTimeout(debounceTimers.get(file.path)!);
+                        debounceTimers.delete(file.path);
+                    }
+                }
+            })
+        );
+
+        this.registerEvent(
+            this.app.vault.on('rename', (file, oldPath) => {
+                processedFiles.delete(oldPath);
+                if (debounceTimers.has(oldPath)) {
+                    window.clearTimeout(debounceTimers.get(oldPath)!);
+                    debounceTimers.delete(oldPath);
+                }
+            })
+        );
+    }
+
     private async initializeOllama() {
         try {
             const isValid = await this.ollamaService.validateConnection();
@@ -179,12 +246,17 @@ export default class AutoTitlePlugin extends Plugin {
         await this.saveData(this.settings);
 
         // Reinitialize services with updated settings
-        this.openaiService = new OpenAIService(this.settings);
+        this.openaiService = new OpenAIService(this.settings, false);
+        this.customService = new OpenAIService(this.settings, true);
         this.ollamaService = new OllamaService(this.settings);
 
         // Reinitialize providers based on current settings
         if (this.settings.provider === 'openai' && this.settings.openaiApiKey) {
             this.openaiService.initialize();
+        }
+
+        if (this.settings.provider === 'custom' && this.settings.customApiKey) {
+            this.customService.initialize();
         }
 
         if (this.settings.provider === 'ollama' && this.settings.ollamaUrl) {

@@ -7,16 +7,25 @@ import { LoadingToast } from '../ui/loading-toast';
 export class TitleGenerator {
     constructor(private plugin: AutoTitlePlugin) {}
 
-    async generateTitleForFile(file: TFile, isAutoRename: boolean = false) {
+    async generateTitleForFile(file: TFile, isAutoRename: boolean = false, checkThreshold: boolean = false) {
         // Check if API is configured
         if (this.plugin.settings.provider === 'openai' && !this.plugin.openaiService.isConfigured()) {
             new Notice('OpenAI not configured. Please set your API key in settings.');
             return;
         }
 
+        if (this.plugin.settings.provider === 'custom' && !this.plugin.customService.isConfigured()) {
+            new Notice('Custom API not configured. Please check your settings.');
+            return;
+        }
+
         if (this.plugin.settings.provider === 'ollama' && !this.plugin.ollamaService.isConfigured()) {
             // eslint-disable-next-line obsidianmd/ui/sentence-case -- Ollama is a proper brand name
             new Notice('Ollama not configured. Please set your Ollama URL in settings.');
+            return;
+        }
+
+        if (checkThreshold && !file.basename.startsWith('Untitled')) {
             return;
         }
 
@@ -48,6 +57,11 @@ export class TitleGenerator {
                 return;
             }
 
+            // Check threshold for open tracking
+            if (checkThreshold && content.trim().length < this.plugin.settings.autoRenameThreshold) {
+                return;
+            }
+
             // Skip if file already has a custom name (not default "Untitled")
             if (isAutoRename && this.plugin.settings.onlyRenameUntitled && !file.basename.startsWith('Untitled')) {
                 return;
@@ -62,6 +76,8 @@ export class TitleGenerator {
             try {
                 if (this.plugin.settings.provider === 'openai') {
                     rawResponse = await this.plugin.openaiService.generateTitle(content, TITLE_GENERATION_PROMPT);
+                } else if (this.plugin.settings.provider === 'custom') {
+                    rawResponse = await this.plugin.customService.generateTitle(content, TITLE_GENERATION_PROMPT);
                 } else if (this.plugin.settings.provider === 'ollama') {
                     rawResponse = await this.plugin.ollamaService.generateTitle(content, TITLE_GENERATION_PROMPT);
                 }

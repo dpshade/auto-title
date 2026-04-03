@@ -33,6 +33,7 @@ export class AutoTitleSettingTab extends PluginSettingTab {
             .addDropdown(dropdown => dropdown
                 .addOption('ollama', 'Ollama')
                 .addOption('openai', 'OpenAI')
+                .addOption('custom', 'OpenAI-Compatible')
                 .setValue(this.plugin.settings.provider)
                 .onChange(async (value: string) => {
                     this.plugin.settings.provider = value as Provider;
@@ -50,6 +51,42 @@ export class AutoTitleSettingTab extends PluginSettingTab {
                     .setValue(this.plugin.settings.openaiApiKey)
                     .onChange(async (value) => {
                         this.plugin.settings.openaiApiKey = value;
+                        await this.plugin.saveSettings();
+                    }));
+        }
+
+        // Custom OpenAI-compatible settings
+        if (this.plugin.settings.provider === 'custom') {
+            new Setting(containerEl)
+                .setName('Custom API Base URL')
+                .setDesc('Enter the base URL for your OpenAI-compatible API (e.g., https://api.xiaomimimo.com/v1)')
+                .addText(text => text
+                    .setPlaceholder('https://api.xiaomimimo.com/v1')
+                    .setValue(this.plugin.settings.customBaseUrl)
+                    .onChange(async (value) => {
+                        this.plugin.settings.customBaseUrl = value;
+                        await this.plugin.saveSettings();
+                    }));
+
+            new Setting(containerEl)
+                .setName('Custom API Key')
+                .setDesc('Enter your API key for the custom provider')
+                .addText(text => text
+                    .setPlaceholder('sk-...')
+                    .setValue(this.plugin.settings.customApiKey)
+                    .onChange(async (value) => {
+                        this.plugin.settings.customApiKey = value;
+                        await this.plugin.saveSettings();
+                    }));
+
+            new Setting(containerEl)
+                .setName('Custom Model')
+                .setDesc('Enter the model name to use (e.g., mimo-v2-flash, kimi-k2-5)')
+                .addText(text => text
+                    .setPlaceholder('mimo-v2-flash')
+                    .setValue(this.plugin.settings.customModel)
+                    .onChange(async (value) => {
+                        this.plugin.settings.customModel = value;
                         await this.plugin.saveSettings();
                     }));
         }
@@ -125,6 +162,33 @@ export class AutoTitleSettingTab extends PluginSettingTab {
                     this.plugin.settings.onlyRenameUntitled = value;
                     await this.plugin.saveSettings();
                 }));
+
+        new Setting(containerEl)
+            .setName('Auto-rename on open (Untitled files)')
+            .setDesc('When opening an Untitled file, automatically generate a title once the content reaches the threshold')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.autoRenameOnOpen)
+                .onChange(async (value) => {
+                    this.plugin.settings.autoRenameOnOpen = value;
+                    await this.plugin.saveSettings();
+                    this.display();
+                }));
+
+        if (this.plugin.settings.autoRenameOnOpen) {
+            new Setting(containerEl)
+                .setName('Auto-rename threshold')
+                .setDesc('Minimum character count to trigger auto-rename when opening Untitled files (default: 1000)')
+                .addText(text => text
+                    .setPlaceholder('1000')
+                    .setValue(String(this.plugin.settings.autoRenameThreshold))
+                    .onChange(async (value) => {
+                        const num = parseInt(value, 10);
+                        if (!isNaN(num) && num > 0) {
+                            this.plugin.settings.autoRenameThreshold = num;
+                            await this.plugin.saveSettings();
+                        }
+                    }));
+        }
 
         new Setting(containerEl).setName('Usage').setHeading();
         containerEl.createEl('p', { text: 'Use the command palette (Cmd/Ctrl+P) and search for "Generate AI title" or click the brain icon in the ribbon to generate a title for the current file.' });
