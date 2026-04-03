@@ -28,10 +28,11 @@ interface OpenAIResponse {
 export class OpenAIService {
     private isInitialized = false;
 
-    constructor(private settings: AutoTitleSettings) {}
+    constructor(private settings: AutoTitleSettings, private isCustom = false) {}
 
     initialize() {
-        if (this.settings.openaiApiKey) {
+        const apiKey = this.isCustom ? this.settings.customApiKey : this.settings.openaiApiKey;
+        if (apiKey) {
             this.isInitialized = true;
         } else {
             console.error('Failed to initialize OpenAI: API key not provided');
@@ -40,20 +41,25 @@ export class OpenAIService {
     }
 
     async generateTitle(content: string, prompt: string): Promise<string | null> {
-        if (!this.isInitialized || !this.settings.openaiApiKey) {
+        const apiKey = this.isCustom ? this.settings.customApiKey : this.settings.openaiApiKey;
+
+        if (!this.isInitialized || !apiKey) {
             return null;
         }
 
+        const baseUrl = this.isCustom ? this.settings.customBaseUrl : 'https://api.openai.com/v1';
+        const model = this.isCustom ? this.settings.customModel : 'gpt-3.5-turbo';
+
         try {
             const response = await requestUrl({
-                url: 'https://api.openai.com/v1/chat/completions',
+                url: `${baseUrl}/chat/completions`,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.settings.openaiApiKey}`,
+                    'Authorization': `Bearer ${apiKey}`,
                 },
                 body: JSON.stringify({
-                    model: 'gpt-3.5-turbo',
+                    model: model,
                     messages: [
                         {
                             role: 'user',
@@ -74,6 +80,7 @@ export class OpenAIService {
     }
 
     isConfigured(): boolean {
-        return Boolean(this.settings.openaiApiKey && this.isInitialized);
+        const apiKey = this.isCustom ? this.settings.customApiKey : this.settings.openaiApiKey;
+        return Boolean(apiKey && this.isInitialized);
     }
 }
